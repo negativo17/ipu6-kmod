@@ -1,5 +1,5 @@
-%global commit0 71e0c690292586fc92d4b92b35a40e3ef6a87641
-%global date 20240418
+%global commit0 6fcc4c5955bbfd011aa3023d6c03b9d1faaa367b
+%global date 20240509
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # Build only the akmod package and no kernel module packages:
@@ -7,14 +7,15 @@
 
 %global debug_package %{nil}
 
-Name:           ipu6-kmod
-Version:        0
-Release:        1.%{date}git%{shortcommit0}%{?dist}
-Summary:        Kernel drivers for the IPU 6 and sensors
-License:        GPLv3
-URL:            https://github.com/intel/ipu6-drivers
+Name:       ipu6-kmod
+Version:    0
+Release:    2.%{date}git%{shortcommit0}%{?dist}
+Summary:    Kernel drivers for the IPU 6 and sensors
+License:    GPL-3.0-only
+URL:        https://github.com/intel/ipu6-drivers
 
-Source0:        %{url}/archive/%{commit0}.tar.gz#/ipu6-drivers-%{shortcommit0}.tar.gz
+Source0:    %{url}/archive/%{commit0}.tar.gz#/ipu6-drivers-%{shortcommit0}.tar.gz
+Patch0:     https://patch-diff.githubusercontent.com/raw/intel/ipu6-drivers/pull/214.patch
 
 # Get the needed BuildRequires (in parts depending on what we build for):
 BuildRequires:  kmodtool
@@ -57,5 +58,8 @@ done
 %{?akmod_install}
 
 %changelog
+* Mon May 13 2024 Simone Caronni <negativo17@gmail.com> - 0-2.20240509git6fcc4c5
+- Patch 0 merged upstream.
+
 * Mon May 06 2024 Simone Caronni <negativo17@gmail.com> - 0-1.20240418git71e0c69
 - First build.

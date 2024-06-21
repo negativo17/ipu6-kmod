@@ -9,13 +9,12 @@
 
 Name:       ipu6-kmod
 Version:    0
-Release:    3.%{date}git%{shortcommit0}%{?dist}
+Release:    4.%{date}git%{shortcommit0}%{?dist}
 Summary:    Kernel drivers for the IPU 6 and sensors
 License:    GPL-3.0-only
 URL:        https://github.com/intel/ipu6-drivers
 
 Source0:    %{url}/archive/%{commit0}.tar.gz#/ipu6-drivers-%{shortcommit0}.tar.gz
-Patch0:     https://patch-diff.githubusercontent.com/raw/intel/ipu6-drivers/pull/214.patch
 
 # Get the needed BuildRequires (in parts depending on what we build for):
 BuildRequires:  kmodtool
@@ -58,6 +57,10 @@ done
 %{?akmod_install}
 
 %changelog
+* Fri Jun 21 2024 Simone Caronni <negativo17@gmail.com> - 0-4.20240605git404740a
+- Update to latest snapshot.
+- Use jwrdegoeds's fork for contributions and include ivsc driver.
+
 * Wed Jun 05 2024 Simone Caronni <negativo17@gmail.com> - 0-3.20240605git404740a
 - Update to latest snapshot.
 

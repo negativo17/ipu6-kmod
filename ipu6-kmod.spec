@@ -1,5 +1,5 @@
-%global commit0 404740a2ff102cf3f5e0ac56de07503048fc5742
-%global date 20240605
+%global commit0 bef7b046bf2ad76fb71afce887b091c5fd8a6b38
+%global date 20240618
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 
 # Build only the akmod package and no kernel module packages:
@@ -9,7 +9,7 @@
 
 Name:       ipu6-kmod
 Version:    0
-Release:    4.%{date}git%{shortcommit0}%{?dist}
+Release:    5.%{date}git%{shortcommit0}%{?dist}
 Summary:    Kernel drivers for the IPU 6 and sensors
 License:    GPL-3.0-only
 URL:        https://github.com/intel/ipu6-drivers
@@ -36,7 +36,7 @@ kmodtool  --target %{_target_cpu}  --repo negativo17.org --kmodname %{name} %{?b
 
 for kernel_version in %{?kernel_versions}; do
     mkdir _kmod_build_${kernel_version%%___*}
-    cp -fr drivers include Makefile _kmod_build_${kernel_version%%___*}
+    cp -fr backport-include drivers include Makefile _kmod_build_${kernel_version%%___*}
 done
 
 %build
@@ -57,6 +57,9 @@ done
 %{?akmod_install}
 
 %changelog
+* Fri Jun 21 2024 Simone Caronni <negativo17@gmail.com> - 0-5.20240618gitbef7b04
+- Update to latest snapshot.
+
 * Fri Jun 21 2024 Simone Caronni <negativo17@gmail.com> - 0-4.20240605git404740a
 - Update to latest snapshot.
 - Use jwrdegoeds's fork for contributions and include ivsc driver.

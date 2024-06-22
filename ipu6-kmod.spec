@@ -9,12 +9,13 @@
 
 Name:       ipu6-kmod
 Version:    0
-Release:    5.%{date}git%{shortcommit0}%{?dist}
+Release:    6.%{date}git%{shortcommit0}%{?dist}
 Summary:    Kernel drivers for the IPU 6 and sensors
 License:    GPL-3.0-only
 URL:        https://github.com/intel/ipu6-drivers
 
 Source0:    %{url}/archive/%{commit0}.tar.gz#/ipu6-drivers-%{shortcommit0}.tar.gz
+Patch0:     %{name}-vsc-fw.patch
 
 # Get the needed BuildRequires (in parts depending on what we build for):
 BuildRequires:  kmodtool
@@ -50,6 +51,7 @@ done
 for kernel_version in %{?kernel_versions}; do
     mkdir -p %{buildroot}/%{kmodinstdir_prefix}/${kernel_version%%___*}/%{kmodinstdir_postfix}/
     install -p -m 0755 \
+        _kmod_build_${kernel_version%%___*}/*.ko \
         _kmod_build_${kernel_version%%___*}/drivers/media/i2c/*.ko \
         _kmod_build_${kernel_version%%___*}/drivers/media/pci/intel/ipu6/*.ko \
         %{buildroot}/%{kmodinstdir_prefix}/${kernel_version%%___*}/%{kmodinstdir_postfix}/
@@ -57,6 +59,9 @@ done
 %{?akmod_install}
 
 %changelog
+* Sat Jun 22 2024 Simone Caronni <negativo17@gmail.com> - 0-6.20240618gitbef7b04
+- Fix VSC installation.
+
 * Fri Jun 21 2024 Simone Caronni <negativo17@gmail.com> - 0-5.20240618gitbef7b04
 - Update to latest snapshot.
 

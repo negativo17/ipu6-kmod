@@ -1,6 +1,11 @@
-%global commit0 2c4ad1398dddfb307e8a40a714a6d5f70d6d14cb
-%global date 20240627
+# ipu6-drivers
+%global commit0 aecec2aaef069fea56aa921cf5d7e449bb7a0b82
+%global date 20240624
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
+# ivsc-driver
+%global commit1 b5969f9311c07a80250c3ab5e1174a792195e8e3
+%global date 20240514
+%global shortcommit1 %(c=%{commit0}; echo ${c:0:7})
 
 # Build only the akmod package and no kernel module packages:
 %define buildforkernels akmod
@@ -14,8 +19,13 @@ Summary:    Kernel drivers for the IPU 6 and sensors
 License:    GPL-3.0-only
 URL:        https://github.com/intel/ipu6-drivers
 
-Source0:    %{url}/archive/%{commit0}.tar.gz#/ipu6-drivers-%{shortcommit0}.tar.gz
-Patch0:     %{name}-vsc-fw.patch
+Source0:    https://github.com/intel/ipu6-drivers/archive/%{commit0}.tar.gz#/ipu6-drivers-%{shortcommit0}.tar.gz
+Source1:    https://github.com/intel/ivsc-driver/archive/%{commit1}.tar.gz#/ivsc-driver-%{shortcommit1}.tar.gz
+Source2:    intel-vsc-fw.patch
+Patch1:     https://github.com/intel/ipu6-drivers/pull/239.patch
+Patch2:     https://github.com/intel/ipu6-drivers/pull/242.patch
+Patch3:     https://github.com/intel/ipu6-drivers/pull/243.patch
+Patch4:     https://github.com/jwrdegoede/ipu6-drivers/commit/2c4ad1398dddfb307e8a40a714a6d5f70d6d14cb.patch
 
 # Get the needed BuildRequires (in parts depending on what we build for):
 BuildRequires:  kmodtool
@@ -33,7 +43,11 @@ the IPU6 on Intel Tiger Lake, Alder Lake, Raptor Lake and Meteor Lake platforms.
 # Print kmodtool output for debugging purposes:
 kmodtool  --target %{_target_cpu}  --repo negativo17.org --kmodname %{name} %{?buildforkernels:--%{buildforkernels}} %{?kernels:--for-kernels "%{?kernels}"} 2>/dev/null
 
-%autosetup -p1 -n ipu6-drivers-%{commit0}
+%autosetup -p1 -n ipu6-drivers-%{commit0} -a 1
+
+patch -p0 -i %{SOURCE2}
+cp -av ivsc-driver-%{commit1}/{backport-include,drivers,include} .
+rm -fr intel-vsc-%{commit1}
 
 for kernel_version in %{?kernel_versions}; do
     mkdir _kmod_build_${kernel_version%%___*}
@@ -59,8 +73,9 @@ done
 %{?akmod_install}
 
 %changelog
-* Thu Jul 04 2024 Simone Caronni <negativo17@gmail.com> - 0-7.20240627git2c4ad13
+* Thu Jul 04 2024 Simone Caronni <negativo17@gmail.com> - 0-7.20240624gitaecec2a
 - Update to latest snapshot.
+- Don't generate tarball outside of SPEC file.
 
 * Sat Jun 22 2024 Simone Caronni <negativo17@gmail.com> - 0-6.20240618gitbef7b04
 - Fix VSC installation.

@@ -1,6 +1,6 @@
 # ipu6-drivers
-%global commit0 aecec2aaef069fea56aa921cf5d7e449bb7a0b82
-%global date 20240624
+%global commit0 9369b88ec1ea03670fb2dbfe7abdff411683d462
+%global date 20240719
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
 # ivsc-driver
 %global commit1 b5969f9311c07a80250c3ab5e1174a792195e8e3
@@ -14,7 +14,7 @@
 
 Name:       ipu6-kmod
 Version:    0
-Release:    7.%{date}git%{shortcommit0}%{?dist}
+Release:    8.%{date}git%{shortcommit0}%{?dist}
 Summary:    Kernel drivers for the IPU 6 and sensors
 License:    GPL-3.0-only
 URL:        https://github.com/intel/ipu6-drivers
@@ -22,10 +22,16 @@ URL:        https://github.com/intel/ipu6-drivers
 Source0:    https://github.com/intel/ipu6-drivers/archive/%{commit0}.tar.gz#/ipu6-drivers-%{shortcommit0}.tar.gz
 Source1:    https://github.com/intel/ivsc-driver/archive/%{commit1}.tar.gz#/ivsc-driver-%{shortcommit1}.tar.gz
 Source2:    intel-vsc-fw.patch
-Patch1:     https://github.com/intel/ipu6-drivers/pull/239.patch
-Patch2:     https://github.com/intel/ipu6-drivers/pull/242.patch
-Patch3:     https://github.com/intel/ipu6-drivers/pull/243.patch
-Patch4:     https://github.com/jwrdegoede/ipu6-drivers/commit/2c4ad1398dddfb307e8a40a714a6d5f70d6d14cb.patch
+# https://github.com/intel/ipu6-drivers/pull/214
+Patch0:     214.patch
+# https://github.com/intel/ipu6-drivers/pull/239
+Patch1:     239.patch
+# https://github.com/intel/ipu6-drivers/pull/242
+Patch2:     242.patch
+# https://github.com/intel/ipu6-drivers/pull/243
+Patch3:     243.patch
+# https://github.com/jwrdegoede/ipu6-drivers/commit/2c4ad1398dddfb307e8a40a714a6d5f70d6d14cb
+Patch4:     2c4ad1398dddfb307e8a40a714a6d5f70d6d14cb.patch
 
 # Get the needed BuildRequires (in parts depending on what we build for):
 BuildRequires:  kmodtool
@@ -73,6 +79,9 @@ done
 %{?akmod_install}
 
 %changelog
+* Tue Aug 06 2024 Simone Caronni <negativo17@gmail.com> - 0-8.20240514git9369b88
+- Update to latest snapshot.
+
 * Thu Jul 04 2024 Simone Caronni <negativo17@gmail.com> - 0-7.20240624gitaecec2a
 - Update to latest snapshot.
 - Don't generate tarball outside of SPEC file.

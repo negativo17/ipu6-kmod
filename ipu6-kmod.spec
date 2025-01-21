@@ -1,11 +1,6 @@
-# ipu6-drivers
-%global commit0 9369b88ec1ea03670fb2dbfe7abdff411683d462
-%global date 20240719
+%global commit0 f2a1b54afd8537f52f17adcadd7d3e064cf704a3
+%global date 20250119
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
-# ivsc-driver
-%global commit1 b5969f9311c07a80250c3ab5e1174a792195e8e3
-%global date 20240514
-%global shortcommit1 %(c=%{commit0}; echo ${c:0:7})
 
 # Build only the akmod package and no kernel module packages:
 %define buildforkernels akmod
@@ -13,25 +8,13 @@
 %global debug_package %{nil}
 
 Name:       ipu6-kmod
-Version:    0
-Release:    8.%{date}git%{shortcommit0}%{?dist}
+Version:    0.0^%{date}git%{shortcommit0}
+Release:    1%{?dist}
 Summary:    Kernel drivers for the IPU 6 and sensors
 License:    GPL-3.0-only
-URL:        https://github.com/intel/ipu6-drivers
+URL:        https://github.com/jwrdegoede/ipu6-drivers
 
-Source0:    https://github.com/intel/ipu6-drivers/archive/%{commit0}.tar.gz#/ipu6-drivers-%{shortcommit0}.tar.gz
-Source1:    https://github.com/intel/ivsc-driver/archive/%{commit1}.tar.gz#/ivsc-driver-%{shortcommit1}.tar.gz
-Source2:    intel-vsc-fw.patch
-# https://github.com/intel/ipu6-drivers/pull/214
-Patch0:     214.patch
-# https://github.com/intel/ipu6-drivers/pull/239
-Patch1:     239.patch
-# https://github.com/intel/ipu6-drivers/pull/242
-Patch2:     242.patch
-# https://github.com/intel/ipu6-drivers/pull/243
-Patch3:     243.patch
-# https://github.com/jwrdegoede/ipu6-drivers/commit/2c4ad1398dddfb307e8a40a714a6d5f70d6d14cb
-Patch4:     2c4ad1398dddfb307e8a40a714a6d5f70d6d14cb.patch
+Source0:    %{url}/archive/%{commit0}.tar.gz#/ipu6-drivers-%{shortcommit0}.tar.gz
 
 # Get the needed BuildRequires (in parts depending on what we build for):
 BuildRequires:  kmodtool
@@ -49,11 +32,7 @@ the IPU6 on Intel Tiger Lake, Alder Lake, Raptor Lake and Meteor Lake platforms.
 # Print kmodtool output for debugging purposes:
 kmodtool  --target %{_target_cpu}  --repo negativo17.org --kmodname %{name} %{?buildforkernels:--%{buildforkernels}} %{?kernels:--for-kernels "%{?kernels}"} 2>/dev/null
 
-%autosetup -p1 -n ipu6-drivers-%{commit0} -a 1
-
-patch -p0 -i %{SOURCE2}
-cp -av ivsc-driver-%{commit1}/{backport-include,drivers,include} .
-rm -fr intel-vsc-%{commit1}
+%autosetup -p1 -n ipu6-drivers-%{commit0}
 
 for kernel_version in %{?kernel_versions}; do
     mkdir _kmod_build_${kernel_version%%___*}
@@ -80,6 +59,10 @@ done
 %{?akmod_install}
 
 %changelog
+* Tue Jan 21 2025 Simone Caronni <negativo17@gmail.com> - 0.0^20250119gitf2a1b54-1
+- Update to latest jwrdegoede snapshot.
+- Switch to recent packaging guidelines for snapshots.
+
 * Tue Aug 06 2024 Simone Caronni <negativo17@gmail.com> - 0-8.20240514git9369b88
 - Update to latest snapshot.
 

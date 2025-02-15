@@ -1,6 +1,8 @@
-%global commit0 f2a1b54afd8537f52f17adcadd7d3e064cf704a3
-%global date 20250119
+%global date 20250215
+%global commit0 40f52831a1bd234961b989d921113bb7603233b2
 %global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
+%global commit1 0eae85556558b410635ad03ed5eccb9648e11fce
+%global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
 
 # Build only the akmod package and no kernel module packages:
 %define buildforkernels akmod
@@ -9,12 +11,13 @@
 
 Name:       ipu6-kmod
 Version:    0.0^%{date}git%{shortcommit0}
-Release:    1%{?dist}
+Release:    2%{?dist}
 Summary:    Kernel drivers for the IPU 6 and sensors
 License:    GPL-3.0-only
 URL:        https://github.com/jwrdegoede/ipu6-drivers
 
 Source0:    %{url}/archive/%{commit0}.tar.gz#/ipu6-drivers-%{shortcommit0}.tar.gz
+Source1:    https://github.com/jwrdegoede/usbio-drivers/archive/%{commit1}.tar.gz#/usbio-drivers-%{shortcommit1}.tar.gz
 
 # Get the needed BuildRequires (in parts depending on what we build for):
 BuildRequires:  kmodtool
@@ -32,11 +35,13 @@ the IPU6 on Intel Tiger Lake, Alder Lake, Raptor Lake and Meteor Lake platforms.
 # Print kmodtool output for debugging purposes:
 kmodtool  --target %{_target_cpu}  --repo negativo17.org --kmodname %{name} %{?buildforkernels:--%{buildforkernels}} %{?kernels:--for-kernels "%{?kernels}"} 2>/dev/null
 
-%autosetup -p1 -n ipu6-drivers-%{commit0}
+%autosetup -p1 -n ipu6-drivers-%{commit0} -a 1
+cp -fr usbio-drivers*/{drivers,include} .
+patch -p1 -i patches/*.patch
 
 for kernel_version in %{?kernel_versions}; do
     mkdir _kmod_build_${kernel_version%%___*}
-    cp -fr backport-include drivers include Makefile _kmod_build_${kernel_version%%___*}
+    cp -fr drivers include Makefile _kmod_build_${kernel_version%%___*}
 done
 
 %build
@@ -48,17 +53,21 @@ done
 
 %install
 for kernel_version in %{?kernel_versions}; do
+    # Print out modules that are getting built:
     find _kmod_build_${kernel_version%%___*} -name "*.ko"
     mkdir -p %{buildroot}/%{kmodinstdir_prefix}/${kernel_version%%___*}/%{kmodinstdir_postfix}/
     install -p -m 0755 \
         _kmod_build_${kernel_version%%___*}/*.ko \
         _kmod_build_${kernel_version%%___*}/drivers/media/i2c/*.ko \
-        _kmod_build_${kernel_version%%___*}/drivers/media/pci/intel/ipu6/*.ko \
+        _kmod_build_${kernel_version%%___*}/drivers/media/pci/intel/ipu6/psys/*.ko \
         %{buildroot}/%{kmodinstdir_prefix}/${kernel_version%%___*}/%{kmodinstdir_postfix}/
 done
 %{?akmod_install}
 
 %changelog
+* Sat Feb 15 2025 Simone Caronni <negativo17@gmail.com> - 0.0^20250215git40f5283-2
+- Update to latest snapshot.
+
 * Tue Jan 21 2025 Simone Caronni <negativo17@gmail.com> - 0.0^20250119gitf2a1b54-1
 - Update to latest jwrdegoede snapshot.
 - Switch to recent packaging guidelines for snapshots.

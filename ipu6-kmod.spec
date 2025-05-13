@@ -1,8 +1,6 @@
-%global date 20250215
-%global commit0 40f52831a1bd234961b989d921113bb7603233b2
-%global shortcommit0 %(c=%{commit0}; echo ${c:0:7})
-%global commit1 0eae85556558b410635ad03ed5eccb9648e11fce
-%global shortcommit1 %(c=%{commit1}; echo ${c:0:7})
+%global date 20250508
+%global commit 1a884d5124dc149af4a645aa1493873bf796d677
+%global shortcommit %{sub %{commit} 1 7}
 
 # Build only the akmod package and no kernel module packages:
 %define buildforkernels akmod
@@ -10,14 +8,13 @@
 %global debug_package %{nil}
 
 Name:       ipu6-kmod
-Version:    0.0^%{date}git%{shortcommit0}
-Release:    2%{?dist}
+Version:    0.1^%{date}git%{shortcommit}
+Release:    3%{?dist}
 Summary:    Kernel drivers for the IPU 6 and sensors
 License:    GPL-3.0-only
-URL:        https://github.com/jwrdegoede/ipu6-drivers
+URL:        https://github.com/intel/ipu6-drivers
 
-Source0:    %{url}/archive/%{commit0}.tar.gz#/ipu6-drivers-%{shortcommit0}.tar.gz
-Source1:    https://github.com/jwrdegoede/usbio-drivers/archive/%{commit1}.tar.gz#/usbio-drivers-%{shortcommit1}.tar.gz
+Source0:    %{url}/archive/%{commit}.tar.gz#/ipu6-drivers-%{shortcommit}.tar.gz
 
 # Get the needed BuildRequires (in parts depending on what we build for):
 BuildRequires:  kmodtool
@@ -35,9 +32,9 @@ the IPU6 on Intel Tiger Lake, Alder Lake, Raptor Lake and Meteor Lake platforms.
 # Print kmodtool output for debugging purposes:
 kmodtool  --target %{_target_cpu}  --repo negativo17.org --kmodname %{name} %{?buildforkernels:--%{buildforkernels}} %{?kernels:--for-kernels "%{?kernels}"} 2>/dev/null
 
-%autosetup -p1 -n ipu6-drivers-%{commit0} -a 1
-cp -fr usbio-drivers*/{drivers,include} .
+%autosetup -p1 -n ipu6-drivers-%{commit}
 patch -p1 -i patches/*.patch
+rm -fr dkms.conf .github
 
 for kernel_version in %{?kernel_versions}; do
     mkdir _kmod_build_${kernel_version%%___*}
@@ -57,7 +54,6 @@ for kernel_version in %{?kernel_versions}; do
     find _kmod_build_${kernel_version%%___*} -name "*.ko"
     mkdir -p %{buildroot}/%{kmodinstdir_prefix}/${kernel_version%%___*}/%{kmodinstdir_postfix}/
     install -p -m 0755 \
-        _kmod_build_${kernel_version%%___*}/*.ko \
         _kmod_build_${kernel_version%%___*}/drivers/media/i2c/*.ko \
         _kmod_build_${kernel_version%%___*}/drivers/media/pci/intel/ipu6/psys/*.ko \
         %{buildroot}/%{kmodinstdir_prefix}/${kernel_version%%___*}/%{kmodinstdir_postfix}/
@@ -65,6 +61,9 @@ done
 %{?akmod_install}
 
 %changelog
+* Tue May 13 2025 Simone Caronni <negativo17@gmail.com> - 0.1^20250508git1a884d5-3
+- Switch again to intel tree, now that is up to date.
+
 * Sat Feb 15 2025 Simone Caronni <negativo17@gmail.com> - 0.0^20250215git40f5283-2
 - Update to latest snapshot.
 

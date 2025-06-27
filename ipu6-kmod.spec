@@ -1,5 +1,5 @@
-%global date 20250508
-%global commit 1a884d5124dc149af4a645aa1493873bf796d677
+%global date 20250627
+%global commit 9bff73689ea2502f6e3bc34769fd699cde3ffeea
 %global shortcommit %{sub %{commit} 1 7}
 
 # Build only the akmod package and no kernel module packages:
@@ -9,7 +9,7 @@
 
 Name:       ipu6-kmod
 Version:    0.1^%{date}git%{shortcommit}
-Release:    3%{?dist}
+Release:    4%{?dist}
 Summary:    Kernel drivers for the IPU 6 and sensors
 License:    GPL-3.0-only
 URL:        https://github.com/intel/ipu6-drivers
@@ -61,6 +61,9 @@ done
 %{?akmod_install}
 
 %changelog
+* Fri Jun 27 2025 Simone Caronni <negativo17@gmail.com> - 0.1^20250627git9bff736-4
+- Update to latest snapshot.
+
 * Tue May 13 2025 Simone Caronni <negativo17@gmail.com> - 0.1^20250508git1a884d5-3
 - Switch again to intel tree, now that is up to date.
 

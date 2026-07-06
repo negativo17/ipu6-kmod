@@ -1,6 +1,6 @@
-%global date 20250627
-%global commit 9bff73689ea2502f6e3bc34769fd699cde3ffeea
+%global commit 0d5ba31069ead844e231ed1ac637ac8ef571d63a
 %global shortcommit %{sub %{commit} 1 7}
+%global date 20260617
 
 # Build only the akmod package and no kernel module packages:
 %define buildforkernels akmod
@@ -8,8 +8,8 @@
 %global debug_package %{nil}
 
 Name:       ipu6-kmod
-Version:    0.1^%{date}git%{shortcommit}
-Release:    4%{?dist}
+Version:    0^%{date}git%{shortcommit}
+Release:    5%{?dist}
 Summary:    Kernel drivers for the IPU 6 and sensors
 License:    GPL-3.0-only
 URL:        https://github.com/intel/ipu6-drivers
@@ -23,8 +23,8 @@ BuildRequires:  kmodtool
 %{expand:%(kmodtool --target %{_target_cpu} --repo negativo17.org --kmodname %{name} %{?buildforkernels:--%{buildforkernels}} %{?kernels:--for-kernels "%{?kernels}"} 2>/dev/null) }
 
 %description
-Kernel drivers for the VSC, IPU 6 and sensors. It supports MIPI cameras through
-the IPU6 on Intel Tiger Lake, Alder Lake, Raptor Lake and Meteor Lake platforms.
+Kernel drivers for the IPU 6 and sensors. It supports MIPI cameras through the
+IPU6 on Intel Lake platforms.
 
 %prep
 # Error out if there was something wrong with kmodtool:
@@ -61,6 +61,10 @@ done
 %{?akmod_install}
 
 %changelog
+* Mon Jul 06 2026 Simone Caronni <negativo17@gmail.com> - 0^20260617git0d5ba31-5
+- Update to latest snapshot.
+- Use proper versioning for snapshots.
+
 * Fri Jun 27 2025 Simone Caronni <negativo17@gmail.com> - 0.1^20250627git9bff736-4
 - Update to latest snapshot.
 

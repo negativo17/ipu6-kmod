@@ -1,0 +1,77 @@
+diff -Naur ipu6-drivers-0d5ba31069ead844e231ed1ac637ac8ef571d63a.old/dkms.conf ipu6-drivers-0d5ba31069ead844e231ed1ac637ac8ef571d63a/dkms.conf
+--- ipu6-drivers-0d5ba31069ead844e231ed1ac637ac8ef571d63a.old/dkms.conf	2026-06-17 10:26:49.000000000 +0200
++++ ipu6-drivers-0d5ba31069ead844e231ed1ac637ac8ef571d63a/dkms.conf	2026-07-07 16:12:55.059078650 +0200
+@@ -1,9 +1,6 @@
+-PACKAGE_NAME=ipu6-drivers
+-PACKAGE_VERSION=0.0.0
++PACKAGE_NAME=ipu6
++PACKAGE_VERSION=0
+ 
+-MAKE="make KERNELRELEASE=$kernelver KERNEL_SRC=$kernel_source_dir"
+-CLEAN="make KERNELRELEASE=$kernelver KERNEL_SRC=$kernel_source_dir clean"
+-AUTOINSTALL="yes"
+ BUILD_EXCLUSIVE_CONFIG="CONFIG_VIDEO_V4L2_I2C"
+ 
+ version_lt() {
+@@ -34,6 +31,8 @@
+ KV_IVSC=6.6.0
+ KV_OV2740=6.8.0
+ KV_OV01A10=6.8.0
++KV_OV02C10=6.16.0
++KV_OV02E10=6.16.0
+ KV_OV05C10=6.8.0
+ KV_HI556=6.10.0
+ KV_IPU6_ISYS=6.10.0
+@@ -48,13 +47,17 @@
+ BUILT_MODULE_LOCATION[1]="drivers/media/i2c"
+ DEST_MODULE_LOCATION[1]="/updates"
+ 
+-BUILT_MODULE_NAME[2]="ov02c10"
+-BUILT_MODULE_LOCATION[2]="drivers/media/i2c"
+-DEST_MODULE_LOCATION[2]="/updates"
+-
+-BUILT_MODULE_NAME[3]="ov02e10"
+-BUILT_MODULE_LOCATION[3]="drivers/media/i2c"
+-DEST_MODULE_LOCATION[3]="/updates"
++if version_lt ${KERNEL_VERSION} ${KV_OV02C10}; then
++    BUILT_MODULE_NAME[2]="ov02c10"
++    BUILT_MODULE_LOCATION[2]="drivers/media/i2c"
++    DEST_MODULE_LOCATION[2]="/updates"
++fi
++
++if version_lt ${KERNEL_VERSION} ${KV_OV02E10}; then
++    BUILT_MODULE_NAME[3]="ov02e10"
++    BUILT_MODULE_LOCATION[3]="drivers/media/i2c"
++    DEST_MODULE_LOCATION[3]="/updates"
++fi
+ 
+ BUILT_MODULE_NAME[4]="hm2170"
+ BUILT_MODULE_LOCATION[4]="drivers/media/i2c"
+diff -Naur ipu6-drivers-0d5ba31069ead844e231ed1ac637ac8ef571d63a.old/Makefile ipu6-drivers-0d5ba31069ead844e231ed1ac637ac8ef571d63a/Makefile
+--- ipu6-drivers-0d5ba31069ead844e231ed1ac637ac8ef571d63a.old/Makefile	2026-06-17 10:26:49.000000000 +0200
++++ ipu6-drivers-0d5ba31069ead844e231ed1ac637ac8ef571d63a/Makefile	2026-07-07 16:10:44.771136298 +0200
+@@ -24,6 +24,8 @@
+ KV_IPU_BRIDGE := 6.6.0
+ KV_OV2740 := 6.8.0
+ KV_OV01A10 := 6.8.0
++KV_OV02C10 := 6.16.0
++KV_OV02E10 := 6.16.0
+ KV_OV05C10 := 6.8.0
+ KV_HI556 := 6.10.0
+ KV_IPU6_ISYS := 6.10.0
+@@ -87,8 +89,15 @@
+ 
+ export CONFIG_ICAMERA_HM11B1 = m
+ export CONFIG_ICAMERA_OV01A1S = m
++
++ifeq ($(call version_lt,$(KERNEL_VERSION),$(KV_OV02C10)),true)
+ export CONFIG_ICAMERA_OV02C10 = m
++endif
++
++ifeq ($(call version_lt,$(KERNEL_VERSION),$(KV_OV02E10)),true)
+ export CONFIG_ICAMERA_OV02E10 = m
++endif
++
+ export CONFIG_ICAMERA_HM2170 = m
+ export CONFIG_ICAMERA_HM2172 = m
+ export CONFIG_ICAMERA_GC5035 = m

@@ -9,12 +9,13 @@
 
 Name:       ipu6-kmod
 Version:    0^%{date}git%{shortcommit}
-Release:    5%{?dist}
+Release:    6%{?dist}
 Summary:    Kernel drivers for the IPU 6 and sensors
 License:    GPL-3.0-only
 URL:        https://github.com/intel/ipu6-drivers
 
 Source0:    %{url}/archive/%{commit}.tar.gz#/ipu6-drivers-%{shortcommit}.tar.gz
+Patch0:     ipu6-drivers-kvers.patch
 
 # Get the needed BuildRequires (in parts depending on what we build for):
 BuildRequires:  kmodtool
@@ -61,6 +62,9 @@ done
 %{?akmod_install}
 
 %changelog
+* Tue Jul 07 2026 Simone Caronni <negativo17@gmail.com> - 0^20260617git0d5ba31-6
+- Use patched project's dkms file for proper detection.
+
 * Mon Jul 06 2026 Simone Caronni <negativo17@gmail.com> - 0^20260617git0d5ba31-5
 - Update to latest snapshot.
 - Use proper versioning for snapshots.
